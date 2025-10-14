@@ -11,15 +11,15 @@ app.use(cors({
     credentials: true
 }));
 app.use(express.json({limit : '16kb'}))//for parsing the incoming data
-app.use(express.urlencoded({extended:true}))
+app.use(express.urlencoded({extended:true , limit : "16kb"}))
 app.use(express.static("public"))
 app.use(cookieParser());
 
 
-app.use((req, res, next) => {
-  console.log(`➡️ Incoming request: ${req.method} ${req.url}`);
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log(`➡️ Incoming request: ${req.method} ${req.url}`);
+//   next();
+// });
 //routes import 
 const userRouter  = require('./routes/user.routes.js')
 

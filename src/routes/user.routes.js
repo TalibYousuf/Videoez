@@ -1,40 +1,33 @@
 const express = require('express');
-const userRouter = express.Router();
-const { registerUser,
-        loginUser,
-        logoutUser, 
-        changeCurrentPassword, 
-        refreshAccessToken, 
-        getCurrentUser, 
-        updateAccountDetails, 
-        updateUserAvatar, 
-        updateUserCoverImage, 
-        getUserChannelProfile, 
-        getWatchHistory } = require('../controllers/user.controller.js');
-const { verifyJWT } = require('../middlewares/auth.middleware.js')
-const upload = require('../middlewares/multer.middleware.js');
+const router = express.Router();
+const { verifyJWT } = require('../middlewares/auth.middleware');
+const upload = require('../middlewares/multer.middleware');
+const userController = require('../controllers/user.controller');
 
-userRouter
-    .route('/register')
-    .post(
-    upload.fields([
-        { name: 'avatar', maxCount: 1 },
-        { name: 'coverImage', maxCount: 1 }
-    ]),
-    registerUser 
+// Test route that we know works
+router.get('/test', function(req, res) {
+  res.status(200).json({ message: "Test endpoint working" });
+});
+// Auth routes
+router.post('/register', 
+  upload.fields([
+    { name: 'avatar', maxCount: 1 },
+    { name: 'coverImage', maxCount: 1 }
+  ]),
+  userController.registerUser
 );
 
-userRouter.route('/login').post(loginUser)
+router.post('/login', userController.loginUser);
+router.post('/logout', verifyJWT, userController.logoutUser);
+router.post('/refresh-token', userController.refreshAccessToken);
 
+// Secured routes
+router.post('/change-password', verifyJWT, userController.changeCurrentPassword);
+router.get('/current-user', verifyJWT, userController.getCurrentUser);
+router.patch('/update-account', verifyJWT, userController.updateAccountDetails);
+router.patch('/avatar', verifyJWT, upload.single("avatar"), userController.updateUserAvatar);
+router.patch('/cover-image', verifyJWT, upload.single("coverImage"), userController.updateUserCoverImage);
+router.get('/c/:username', verifyJWT, userController.getUserChannelProfile);
+router.get('/history', verifyJWT, userController.getWatchHistory);
 
-//secured routes
-userRouter.route('/logout').post(verifyJWT,logoutUser);
-userRouter.route('/refresh-token').post(refreshAccessToken)
-userRouter.route('/change-password').post(verifyJWT,changeCurrentPassword)
-userRouter.route('/current-user').get(verifyJWT,getCurrentUser)
-userRouter.route('/update-account').patch(verifyJWT,updateAccountDetails) //if we use "put" everything will be updated
-userRouter.route('/avatar').patch(verifyJWT,upload.single("avatar"),updateUserAvatar)//used 2 middlewares
-userRouter.route('/cover-Image',verifyJWT,upload.single("coverImage"),updateUserCoverImage)
-userRouter.route('/c/:username').get(verifyJWT,getUserChannelProfile) // we were using params
-userRouter.route('/history').get(verifyJWT,getWatchHistory)
-module.exports = userRouter;
+module.exports = router;

@@ -44,7 +44,7 @@ const registerUser =  asyncHandler( async (req,res)=>{
             field?.trim() === "")
         )
     {
-        throw apiError(400,"all fields are required")
+        throw new apiError(400,"all fields are required")
     }
     const existedUser = await User.findOne({
         $or : [{ username },{ email }]
@@ -183,13 +183,13 @@ const refreshAccessToken = asyncHandler(async (req,res)=>{
             httpOnly : true,
             secure : true
         }
-        const {accessToken,newRefreshToken} = await generateAccessAndRefreshToken(user._id);
+        const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id);
         return res
         .status(200)
         .cookie("accessToken",accessToken,options)
-        .cookie("refreshToken",newRefreshToken,options)
+        .cookie("refreshToken",refreshToken,options)
         .json(
-            new apiResponse(200,{accessToken,refreshToken:newRefreshToken},"access token refreshed")
+            new apiResponse(200,{accessToken,refreshToken},"access token refreshed")
         )
     } catch (error) {
         throw new apiError(401,error?.message || "invalid refresh token")
@@ -216,11 +216,11 @@ const changeCurrentPassword = asyncHandler( async (req,res)=>{
     await user.save({validateBeforeSave: false});
     return res
     .status(200)
-    .json(new apiResponse(200,"password changed successfully"));
+    .json(new apiResponse(200,{},"password changed successfully"));
 })
 
 const getCurrentUser = asyncHandler(async(req,res)=>{
-    return res.status(200).json(200,req.user,"current user fetched successfully");
+    return res.status(200).json(new apiResponse(200,req.user,"user details fetched successfully"));
 })
 
 const updateAccountDetails = asyncHandler(async(req,res)=>{
@@ -426,6 +426,4 @@ module.exports = {
     updateUserCoverImage,
     getUserChannelProfile,
     getWatchHistory,
-
-    
 }
