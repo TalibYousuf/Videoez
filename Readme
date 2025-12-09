@@ -1,0 +1,95 @@
+Videoez Backend — Video Upload & Streaming API
+
+This repository contains the backend API for Videoez — a simple service that enables uploading, storing, and streaming video files. It is built using Node.js + Express with clean, modular architecture.
+
+⸻
+
+FEATURES
+	•	Upload video files
+	•	Store uploaded videos locally
+	•	Fetch list of uploaded videos
+	•	Stream videos using HTTP range requests
+	•	Clear folder structure
+	•	Centralized error handling
+	•	CORS enabled
+
+⸻
+
+TECH STACK
+
+Node.js
+Express.js
+Multer (file uploads)
+fs / Streams (for video streaming)
+dotenv
+Nodemon
+
+⸻
+
+INSTALLATION & SETUP
+	1.	Clone the repository
+git clone https://github.com/TalibYousuf/Videoez.git
+cd Videoez
+	2.	Install dependencies
+npm install
+	3.	Create a .env file in the root folder with the following:
+PORT=5000
+UPLOAD_DIR=uploads
+	4.	Start the server
+npm start
+
+Server will run at:
+http://localhost:5000
+
+⸻
+
+API ENDPOINTS
+	1.	Upload Video
+POST /api/videos/upload
+Content-Type: multipart/form-data
+Uploads a video file to the server.
+	2.	Stream Video
+GET /api/videos/stream/:filename
+Streams a video using range-based streaming.
+Works with HTML5 video players.
+	3.	Get All Videos
+GET /api/videos
+Returns a list of uploaded video files.
+
+⸻
+
+FOLDER STRUCTURE
+
+Videoez/
+├── uploads/ (stored videos)
+├── controllers/
+├── routes/
+├── middleware/
+├── server.js
+├── .env.example
+└── README.md
+
+⸻
+
+TESTING
+
+You can use:
+– Postman
+– Thunder Client
+– curl
+
+⸻
+
+FUTURE ENHANCEMENTS
+
+– Add JWT authentication
+– Store videos in AWS S3 or Firebase
+– Generate thumbnails
+– Add file-type and size validation
+– Support HLS/DASH adaptive streaming
+
+⸻
+
+LICENSE
+
+MIT License — free to use and modify.
